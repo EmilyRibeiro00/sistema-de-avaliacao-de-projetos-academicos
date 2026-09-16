@@ -30,7 +30,8 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    // EAGER: LAZY causava LazyInitializationException — o fluxo de login lê Pessoa fora da transação original
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pessoa_id", unique = true, nullable = false)
     private Pessoa pessoa;
 

@@ -2,7 +2,7 @@ spring:
   application:
     name: sistema-avaliacao
   datasource:
-    url: jdbc:postgresql://localhost:5432/avaliacao
+    url: jdbc:postgresql://localhost:5433/avaliacao
     username: avaliacao
     password: avaliacao
   jpa:

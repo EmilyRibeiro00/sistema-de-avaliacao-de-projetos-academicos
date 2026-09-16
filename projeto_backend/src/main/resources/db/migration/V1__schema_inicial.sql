@@ -56,7 +56,7 @@ CREATE TABLE edicao (
     status VARCHAR(20) NOT NULL,
     data_abertura TIMESTAMPTZ,
     data_fechamento TIMESTAMPTZ,
-    min_avaliadores_por_projeto INT NOT NULL DEFAULT 2,
+    min_avaliadores_por_projeto INT NOT NULL DEFAULT 3,
     limite_max_projetos_por_avaliador INT,
     limite_divergencia_notas NUMERIC(4,2),
     escala_nota_min NUMERIC(4,2) NOT NULL DEFAULT 0,
@@ -123,6 +123,9 @@ CREATE TABLE projeto_discente (
     pessoa_id BIGINT NOT NULL REFERENCES pessoa(id),
     papel VARCHAR(20) NOT NULL
 );
+
+-- No máximo um AUTOR por projeto (pode ter quantos COAUTOR forem necessários); "pelo menos um autor" fica a cargo da aplicação
+CREATE UNIQUE INDEX uk_projeto_discente_um_autor ON projeto_discente (projeto_id) WHERE papel = 'AUTOR';
 
 CREATE TABLE projeto_orientador (
     id BIGSERIAL PRIMARY KEY,

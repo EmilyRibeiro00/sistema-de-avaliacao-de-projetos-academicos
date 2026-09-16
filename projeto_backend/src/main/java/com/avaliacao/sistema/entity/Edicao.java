@@ -38,7 +38,7 @@ public class Edicao {
 
     private Instant dataFechamento;
 
-    private Integer minAvaliadoresPorProjeto = 2;
+    private Integer minAvaliadoresPorProjeto = 3;
 
     private Integer limiteMaxProjetosPorAvaliador;
 

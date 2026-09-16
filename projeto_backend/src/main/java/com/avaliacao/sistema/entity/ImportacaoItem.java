@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -38,7 +37,6 @@ public class ImportacaoItem {
     @Enumerated(EnumType.STRING)
     private StatusImportacaoItem status;
 
-    @Lob
     private String mensagemErro;
 
     private Long entidadeResultanteId;

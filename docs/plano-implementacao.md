@@ -91,7 +91,7 @@ Serviço `AtribuicaoService`, pipeline:
 1. Pool = `EdicaoAvaliador` com `status=ATIVO` na edição ativa, filtrado por `AvaliadorArea` compatível com a área do projeto
 2. Excluir avaliadores com conflito de interesse: `Pessoa.id` do avaliador é orientador (`ProjetoOrientador`) ou coautor (`ProjetoDiscente`) do projeto
 3. Aplicar limite de carga (`EdicaoAvaliador.limite_max_projetos` ou o default da `Edicao`) — remover do pool quem já atingiu o teto
-4. Sortear aleatoriamente N avaliadores do pool restante (N = `min_avaliadores_por_projeto`)
+4. Sortear aleatoriamente N avaliadores do pool restante (N = `min_avaliadores_por_projeto`, default 3)
 5. Pool insuficiente: não falha silenciosamente — sinaliza ao admin (lista de "projetos com atribuição incompleta")
 - Endpoint admin para disparar atribuição em lote (por edição) ou por projeto
 - Reatribuição manual: cancela `Atribuicao` antiga, cria nova com `origem=MANUAL`, `motivo` obrigatório, sempre logado
@@ -110,6 +110,7 @@ Serviço `AtribuicaoService`, pipeline:
 
 ### Fase 8 — Consolidação e relatórios
 - Status "avaliado": todas `Atribuicao` ATIVAS com `Avaliacao.status = ENVIADA`
+- Nota do projeto: média aritmética simples das `Avaliacao.nota_final` enviadas (mínimo 3, por `min_avaliadores_por_projeto`) — calculada em serviço, não persistida
 - Divergência: diferença entre notas finais dos avaliadores de um projeto > `limite_divergencia_notas` → sinalizada ao admin
 - Endpoint admin: comparação de notas entre avaliadores de um mesmo projeto (nunca exposto ao avaliador)
 - Relatórios comparativos entre edições — só admin
@@ -121,9 +122,11 @@ Serviço `AtribuicaoService`, pipeline:
 Focar nas regras com maior risco de bug silencioso:
 - Importação do Sigaa: upsert idempotente por `sigaa_id`, item com área não mapeada não derruba o lote
 - Importação de avaliadores: dedup por CPF/SIAPE não duplica `Pessoa` entre edições
-- Sorteio de atribuição respeita filtro de área + conflito de interesse + limite de carga + escopo de edição (`EdicaoAvaliador`)
-- Pool insuficiente sinaliza e não falha silenciosamente
-- Cálculo de nota final bate com os pesos da edição
+- Sorteio de atribuição respeita filtro de área + conflito de interesse + limite de carga + escopo de edição (`EdicaoAvaliador`) — inclusive o caso de uma pessoa ser orientadora de um projeto e avaliadora de outro
+- Pool insuficiente (< `min_avaliadores_por_projeto`, default 3) sinaliza e não falha silenciosamente
+- Cálculo de nota final (por avaliação) bate com os pesos da edição
+- Nota do projeto = média das `Avaliacao.nota_final` enviadas, recalculada dinamicamente conforme avaliações chegam ou são reabertas
+- Um projeto nunca tem mais de um `AUTOR` (constraint de banco) nem aceita ser salvo sem nenhum (validação de serviço)
 - Bloqueio de edição por prazo
 - Blind review: resposta ao avaliador nunca contém nome de discente/orientador/instituição, mesmo em payloads aninhados
 - Edição encerrada é somente leitura em todos os endpoints relevantes

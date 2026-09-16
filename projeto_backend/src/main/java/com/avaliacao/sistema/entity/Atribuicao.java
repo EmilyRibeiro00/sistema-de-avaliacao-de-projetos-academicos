@@ -10,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -45,7 +44,6 @@ public class Atribuicao {
     @Enumerated(EnumType.STRING)
     private OrigemAtribuicao origem;
 
-    @Lob
     private String motivo;
 
     @ManyToOne(fetch = FetchType.LAZY)

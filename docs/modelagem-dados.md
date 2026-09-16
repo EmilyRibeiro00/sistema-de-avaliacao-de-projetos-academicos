@@ -116,7 +116,7 @@ Só uma pode estar `ATIVA` por vez (validado em serviço).
 | ano | int | |
 | status | enum: PLANEJADA, ATIVA, ENCERRADA | |
 | data_abertura / data_fechamento | timestamp | prazo de avaliação |
-| min_avaliadores_por_projeto | int, default 2 | |
+| min_avaliadores_por_projeto | int, default 3 | todo projeto precisa de no mínimo 3 avaliadores atribuídos |
 | limite_max_projetos_por_avaliador | int, nullable | default por edição; pode ser sobrescrito em `EdicaoAvaliador` |
 | limite_divergencia_notas | decimal | threshold para sinalizar divergência |
 | escala_nota_min / escala_nota_max | decimal | default 0/10 |
@@ -167,8 +167,12 @@ Ligam `Projeto` a `Pessoa` com papel. Nunca expostos ao avaliador — usados só
 | pessoa_id | FK Pessoa |
 | papel (só em ProjetoDiscente) | enum: AUTOR, COAUTOR |
 
+- Um projeto tem **exatamente um** `AUTOR` e pode ter quantos `COAUTOR` forem necessários — garantido por índice único parcial (`uk_projeto_discente_um_autor`, `WHERE papel = 'AUTOR'`); "pelo menos um autor" fica a cargo da validação de serviço no momento da importação.
+- Um projeto pode ter **mais de um** `ProjetoOrientador` — sem limite, é N:N puro.
+- Uma mesma `Pessoa` pode orientar vários projetos (`ProjetoOrientador` não é exclusivo por pessoa) e, se também tiver `Usuario` como avaliador, pode avaliar projetos **diferentes** dos que orienta — o conflito de interesse (regra 4.2) só bloqueia a combinação orientador↔projeto específico, não a pessoa como um todo.
+
 ### Atribuicao
-Vínculo avaliador↔projeto. Unicidade `(projeto_id, avaliador_id)` para status ATIVA.
+Vínculo avaliador↔projeto. Unicidade `(projeto_id, avaliador_id)` para status ATIVA. Um mesmo avaliador pode ter `Atribuicao` ativa em vários projetos ao mesmo tempo — o único teto é o `limite_max_projetos_por_avaliador` (configurável por edição, ver `EdicaoAvaliador`), não um limite fixo de "um projeto por avaliador".
 
 | campo | tipo | obs |
 |---|---|---|
@@ -194,6 +198,8 @@ Vínculo avaliador↔projeto. Unicidade `(projeto_id, avaliador_id)` para status
 | reaberta_em | timestamp, nullable | |
 | reaberta_por | FK Usuario, nullable | só admin |
 | motivo_reabertura | text, nullable | obrigatório quando reaberta |
+
+`Avaliacao.nota_final` é a nota **do parecer individual** de um avaliador (média ponderada dos critérios). A **nota do projeto** é outra coisa — é a média aritmética simples das `Avaliacao.nota_final` de todos os avaliadores atribuídos que já enviaram (regra: mínimo 3 por projeto). Não existe coluna `Projeto.nota_final`: é calculada em serviço a partir de `Atribuicao (status=ATIVA) → Avaliacao (status=ENVIADA)`, do mesmo jeito que o status "avaliado" do projeto (regra 7.1) — se fosse persistida, uma reabertura de avaliação (regra 6.4) deixaria o valor salvo desatualizado até alguém lembrar de recalcular.
 
 ### AvaliacaoNota
 | campo | tipo | obs |
@@ -266,6 +272,10 @@ Resultado por registro dentro do lote — essencial para o admin ver *quais* lin
 - **Sem reaproveitamento entre edições** (regra 2): `Avaliacao` só existe pendurada em `Atribuicao → Projeto → Edicao`; sem mecanismo de cópia.
 - **Nota final calculada** (regra 6.3): recalculada no servidor a partir de `AvaliacaoNota × Criterio.peso`; nunca aceita como input direto.
 - **Projeto "avaliado"** (regra 7.1): status derivado — todas as `Atribuicao` ATIVAS do projeto têm `Avaliacao.status = ENVIADA`.
+- **Mínimo de 3 avaliadores por projeto**: `Edicao.min_avaliadores_por_projeto` (default 3) é o N usado no sorteio (Fase 5 do plano); projeto com menos de 3 `Atribuicao` ATIVA fica sinalizado como atribuição incompleta.
+- **Nota do projeto = média das avaliações**: calculada em serviço como a média aritmética de `Avaliacao.nota_final` de todas as `Atribuicao` ATIVA com `Avaliacao.status = ENVIADA` do projeto — não confundir com `Avaliacao.nota_final`, que é a nota de um parecer individual.
+- **Um autor, N coautores, N orientadores**: `uk_projeto_discente_um_autor` garante no máximo um `AUTOR` por projeto no banco; `COAUTOR` e `ProjetoOrientador` são N:N sem limite superior.
+- **Avaliador avalia vários projetos / orientador avalia projeto alheio**: nenhuma constraint limita `Atribuicao` a um projeto por avaliador; o conflito de interesse (regra 4.2) compara `Pessoa.id` **por projeto específico**, então a mesma pessoa pode orientar o Projeto A e avaliar o Projeto B sem problema.
 - **Importação idempotente do Sigaa**: upsert por `Projeto.sigaa_id` dentro da edição — reenviar o mesmo JSON não duplica.
 - **Área não reconhecida não trava o lote**: fica `ImportacaoItem.status = PENDENTE_MAPEAMENTO`; depois que o admin resolve o `AreaConhecimentoAlias`, o item pode ser reprocessado isoladamente.
 - **Pool de sorteio depende da edição** (regra 4.1): filtro sempre passa por `EdicaoAvaliador (edicao_id, status=ATIVO)`, não só por `AvaliadorArea` (que é global à pessoa).

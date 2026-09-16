@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: sispac-postgres
+    environment:
+      POSTGRES_DB: avaliacao
+      POSTGRES_USER: avaliacao
+      POSTGRES_PASSWORD: avaliacao
+    ports:
+      # host:5433 -> evita colidir com uma instalação nativa de Postgres já usando a 5432
+      - "5433:5432"
+    volumes:
+      - sispac-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U avaliacao"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./projeto_backend
+    container_name: sispac-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # dentro da rede do compose o backend fala com "db" na porta interna do container (5432), não com a 5433 do host
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/avaliacao
+      SPRING_DATASOURCE_USERNAME: avaliacao
+      SPRING_DATASOURCE_PASSWORD: avaliacao
+      APP_CORS_ORIGENS_PERMITIDAS: http://localhost:5173
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./projeto_frontend
+    container_name: sispac-frontend
+    volumes:
+      # bind mount do código-fonte: hot-reload funciona igual ao npm run dev local, sem rebuild de imagem
+      - ./projeto_frontend/src:/app/src
+      - ./projeto_frontend/public:/app/public
+      - ./projeto_frontend/index.html:/app/index.html
+    ports:
+      - "5173:5173"
+
+volumes:
+  sispac-postgres-data:
