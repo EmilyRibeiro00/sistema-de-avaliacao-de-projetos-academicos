@@ -1,4 +1,4 @@
-# Modelagem de Dados — Sistema de Avaliação de Projetos
+# Modelagem de Dados — SICAC
 
 Stack alvo: Java + Spring Boot (JPA/Hibernate + PostgreSQL, migrations via Flyway).
 

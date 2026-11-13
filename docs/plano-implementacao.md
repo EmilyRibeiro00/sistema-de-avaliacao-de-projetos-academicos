@@ -1,4 +1,4 @@
-# Plano de Implementação — Sistema de Avaliação de Projetos
+# Plano de Implementação — SICAC
 
 Referência de schema: [modelagem-dados.md](modelagem-dados.md).
 

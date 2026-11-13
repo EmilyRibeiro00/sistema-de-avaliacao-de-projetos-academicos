@@ -1,9 +1,9 @@
-# Prompt para Figma AI — Protótipo do Sistema de Avaliação de Projetos
+# Prompt para Figma AI — Protótipo do SICAC
 
 Prompt pronto para colar no Figma AI (First Draft) para gerar o protótipo inicial das telas. Limitado a ~2000 caracteres (limite do Figma AI).
 
 ```
-Protótipo de interface web para um Sistema de Avaliação de Projetos Acadêmicos: professores avaliam projetos de alunos numa mostra científica anual, sem saber quem é o autor (avaliação às cegas).
+Protótipo de interface web para o SICAC (Sistema Integrado de Comitês para Avaliação Científica): professores avaliam projetos de alunos numa mostra científica anual, sem saber quem é o autor (avaliação às cegas).
 
 Estilo: limpo, institucional, tons neutros (branco, cinza, azul escuro como destaque), tipografia legível, cantos arredondados. Foco em desktop.
 

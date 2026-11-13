@@ -1,0 +1,311 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap");
+
+/*
+ * Layout em tons de cinza, por decisão de design: --blue deixou de ser azul e virou o acento
+ * "primário" neutro (cinza-chumbo) usado em botão/link/nav ativo/foco; --panel-* substitui os painéis
+ * escuros que eram azul-marinho (hero de nota, auth aside, etc). Vermelho (--red) é reservado como a
+ * única cor de destaque — ver também a regra de alertas mais abaixo, que força todo .br-message
+ * (independente do tom) pro mesmo vermelho claro, em vez do azul/amarelo/verde que o DSGov usaria.
+ *
+ * --interactive/--interactive-light/--interactive-dark/--color-primary-default (abaixo, fora deste
+ * :root) são variáveis do PRÓPRIO DSGov (@govbr-ds/core, carregado no index.html antes deste arquivo)
+ * — sobrescritas aqui pra retingir de cinza os componentes oficiais (botão, foco, etc.), já que eles
+ * não usam --blue (isso é só um token nosso).
+ *
+ * --green/--amber continuam coloridos de propósito: são indicadores de estado (sucesso, carga,
+ * progresso), não "chrome" do layout.
+ * Tipografia: Rawline é a fonte oficial do DSGov, mas não tem CDN público — usamos Raleway, que é o
+ * próprio fallback declarado por --font-family-base no core.css.
+ */
+:root {
+  --blue: #45474b;
+  --blue-dark: #2e3034;
+  --blue-soft: #eef0f2;
+  --ink: #172033;
+  --muted: #697386;
+  --line: #e5e9f0;
+  --surface: #ffffff;
+  --canvas: #f4f5f7;
+  --green: #168821;
+  --green-soft: #e9f7eb;
+  --amber: #a36a00;
+  --amber-soft: #fff7d9;
+  --red: #e52207;
+  --red-soft: #fdeceb;
+  --panel-dark: #2b3139;
+  --panel-dark-2: #3c434d;
+  --panel-text: #c3c7cd;
+  --purple: #7c3aed;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .04);
+
+  /* Retinge os componentes oficiais do DSGov (botão, foco, etc.) de cinza em vez do azul padrão. */
+  --interactive-light: #45474b;
+  --interactive-light-rgb: 69, 71, 75;
+  --interactive-dark: #2e3034;
+  --interactive-dark-rgb: 46, 48, 52;
+  --interactive: var(--interactive-light);
+  --interactive-rgb: var(--interactive-light-rgb);
+  --color-primary-default: #45474b;
+}
+
+/* Alertas sempre em vermelho claro, independente do tom (info/sucesso/alerta/perigo) que o DSGov
+   usaria por padrão — layout é neutro em cinza, vermelho fica reservado só pra chamar atenção. */
+.br-message.info, .br-message.success, .br-message.warning, .br-message.danger,
+.br-message.is-info, .br-message.is-success, .br-message.is-warning, .br-message.is-danger,
+.br-message[info], .br-message[success], .br-message[warning], .br-message[danger] {
+  --message-background: var(--red-soft);
+  --message-color-icon: var(--red);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "Raleway", sans-serif; font-size: 14px; }
+button, input, select, textarea { font: inherit; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { background: #eef1f5; padding: 1px 5px; border-radius: 4px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; }
+
+.app-shell { min-height: 100vh; }
+.sidebar { position: fixed; inset: 0 auto 0 0; width: 248px; background: var(--surface); border-right: 1px solid var(--line); padding: 26px 18px 20px; display: flex; flex-direction: column; z-index: 10; }
+.brand { display: flex; align-items: center; gap: 11px; padding: 0 8px; }
+.brand-mark { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 11px; background: var(--blue); color: white; box-shadow: 0 5px 14px rgba(69, 71, 75,.25); }
+.brand strong { font-size: 20px; letter-spacing: -.5px; display: block; }
+.brand small { color: var(--muted); display: block; font-size: 10px; margin-top: 1px; }
+.workspace { margin: 30px 0 25px; padding: 0 8px; }
+.workspace > small, nav > small { color: #9aa3b2; font-size: 9px; font-weight: 700; letter-spacing: 1.3px; }
+.workspace > div { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+.workspace > div > span { width: 34px; height: 34px; background: var(--blue-soft); color: var(--blue); border-radius: 9px; display: grid; place-items: center; font-size: 11px; font-weight: 700; flex: 0 0 auto; }
+.workspace p { margin: 0; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.workspace strong { font-size: 12px; }
+.workspace p small { color: var(--muted); font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+nav { display: flex; flex-direction: column; gap: 5px; }
+nav > small { padding: 0 8px 8px; }
+.nav-item { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; color: #5e687a; border-radius: 9px; font-weight: 500; cursor: pointer; transition: .18s ease; }
+.nav-item:hover { background: #f7f8fa; color: var(--ink); }
+.nav-item.active { color: var(--blue); background: var(--blue-soft); font-weight: 650; }
+.sidebar-bottom { margin-top: auto; border-top: 1px solid var(--line); padding-top: 14px; }
+.sidebar-bottom button.nav-item { border: 0; background: transparent; width: 100%; text-align: left; }
+/* "main.content" (não ".content" puro) de propósito: o DSGov usa a classe "content" dentro de
+   .br-message (ver components/ui/Callout.tsx) — sem o qualificador de tag, min-height:100vh vazava
+   pro conteúdo do alerta e inflava a caixa inteira pra altura da viewport. */
+main.content { margin-left: 248px; padding: 42px 46px 60px; max-width: 1500px; min-height: 100vh; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; margin-bottom: 28px; flex-wrap: wrap; }
+.page-header p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.eyebrow { color: var(--blue); font-size: 10px; letter-spacing: 1.5px; font-weight: 800; display: block; margin-bottom: 9px; }
+.eyebrow.light { color: var(--panel-text); }
+.title { font-weight: 750; color: var(--ink); letter-spacing: -.035em; }
+.title-1 { font-size: 29px; line-height: 1.2; }
+.title-2 { font-size: 17px; line-height: 1.35; }
+.title-3 { font-size: 14px; }
+
+/* .br-button, .primary e .secondary vêm do DSGov (core.css); danger/ghost/success não existem no padrão,
+   são modificadores próprios por cima da mesma base (formato pill, tamanho, gap já definidos pelo DSGov). */
+.br-button.danger { background: var(--red-soft); color: var(--red); border: 1px solid #f7c6c0; }
+.br-button.danger:hover { background: #fadcd8; }
+.br-button.ghost { background: transparent; color: var(--blue); box-shadow: none; }
+.br-button.ghost:hover { background: var(--blue-soft); }
+.br-button.success { background: var(--green); color: white; border: 1px solid var(--green); }
+.br-button.success:hover { background: #126b1a; border-color: #126b1a; }
+.br-button:disabled { opacity: .45; cursor: not-allowed; }
+
+.card { background: white; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.card-head { padding: 21px 23px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.card-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+.modal-body { padding: 20px 23px; display: flex; flex-direction: column; gap: 17px; }
+
+/* .br-tag (DSGov) dá o formato pill; o DSGov não define cor por tom, então tag-{tone} é modificador
+   próprio usando as mesmas cores oficiais (--green/--amber/--red/--blue) do resto do app. */
+.br-tag { gap: 6px; }
+.br-tag i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex: 0 0 auto; }
+.tag-success { color: var(--green); background: var(--green-soft); }
+.tag-warning { color: var(--amber); background: var(--amber-soft); }
+.tag-danger { color: var(--red); background: var(--red-soft); }
+.tag-info { color: var(--blue); background: var(--blue-soft); }
+.tag-neutral { color: #667085; background: #f2f4f7; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { padding: 11px 23px; background: #f8f9fb; color: #687386; font-size: 9px; letter-spacing: .8px; text-transform: uppercase; }
+td { padding: 15px 23px; border-top: 1px solid #edf0f4; color: #4f5b6c; font-size: 12px; }
+tbody tr:nth-child(even) { background: #fcfcfd; }
+td strong { color: var(--ink); display: block; font-weight: 650; }
+td small { display: block; margin-top: 4px; color: #8a94a4; font-size: 10px; }
+
+.modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.44); backdrop-filter: blur(3px); z-index: 30; display: grid; place-items: center; padding: 24px; }
+.modal { width: min(560px, 100%); max-height: 90vh; overflow: auto; background: white; border-radius: 16px; box-shadow: 0 24px 70px rgba(15,23,42,.25); }
+.modal-head { padding: 21px 23px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
+.modal-actions { padding: 15px 23px; background: #f8f9fb; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 9px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-stack { display: flex; flex-direction: column; gap: 15px; }
+
+/* .br-input e .br-textarea (DSGov) estilizam label+input/textarea sozinhos. required-mark e field-hint
+   são só os dois detalhes que o DSGov não cobre (asterisco vermelho, texto de ajuda abaixo do campo). */
+.required-mark { color: var(--red); }
+.field-hint { display: block; color: #8a94a4; font-weight: 400; font-size: 10px; margin-top: 4px; }
+
+/* br-select-native: select HTML comum (sem o widget JS do DSGov), com a mesma aparência visual. */
+.br-select-native { display: flex; flex-direction: column; gap: 7px; color: #344054; font-size: 11px; font-weight: 650; }
+.br-select-native select { border: 1px solid #d9dee7; border-radius: 8px; min-height: 42px; padding: 10px 12px; outline: none; color: var(--ink); background: white; }
+.br-select-native select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(69, 71, 75,.12); }
+
+/* Alertas usam .br-message (DSGov) — ver components/ui/Callout.tsx. message-body herda o espaçamento
+   que .info-box/.danger-callout etc. davam antes; sem regra extra necessária aqui. */
+.br-message .content { display: flex; flex-direction: column; gap: 3px; }
+.br-message .message-body { color: #667085; line-height: 1.45; font-size: 11px; }
+
+.criteria-layout { display: grid; grid-template-columns: 1fr 270px; gap: 18px; align-items: start; }
+.criteria-list { padding: 8px 20px; }
+.criterion { display: grid; grid-template-columns: 37px 1fr 65px auto; align-items: center; gap: 12px; padding: 15px 4px; border-bottom: 1px solid var(--line); }
+.criterion:last-child { border: 0; }
+.criterion > span { width: 32px; height: 32px; border-radius: 8px; background: #f3f5f8; display: grid; place-items: center; color: #7a8494; font-size: 10px; font-weight: 700; }
+.criterion p { margin: 0; }
+.criterion p strong { display: block; }
+.criterion p small { color: #929baa; font-size: 10px; display: block; margin-top: 4px; }
+.weight { background: var(--blue-soft); color: var(--blue); border-radius: 8px; text-align: center; padding: 8px; font-weight: 750; }
+.weight-card { background: var(--panel-dark); color: white; border-radius: var(--radius); padding: 25px; display: flex; flex-direction: column; box-shadow: 0 10px 28px rgba(43,49,57,.2); }
+.weight-card .metric-icon { background: rgba(255,255,255,.1); color: var(--panel-text); margin-bottom: 26px; }
+.weight-card > small { color: var(--panel-text); font-size: 9px; letter-spacing: .9px; line-height: 1.5; }
+.weight-card > strong { font-size: 46px; margin: 4px 0 13px; letter-spacing: -3px; }
+.weight-card > strong span { font-size: 20px; }
+.weight-card p { font-size: 11px; color: #79e4aa; display: flex; gap: 7px; align-items: center; margin: 16px 0 9px; }
+.weight-card .progress i { background: #65e6a1; }
+
+.metric-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 11px; flex: 0 0 auto; }
+.metric-icon.blue { background: var(--blue-soft); color: var(--blue); }
+.metric-icon.green { background: var(--green-soft); color: var(--green); }
+
+.progress { height: 6px; background: rgba(148,163,184,.25); border-radius: 10px; overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--blue); border-radius: inherit; }
+
+.assignment-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 18px; }
+.assignment-summary > div { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow); }
+.assignment-summary small { font-size: 9px; color: #8a94a4; letter-spacing: .7px; display: block; }
+.assignment-summary strong { font-size: 24px; display: block; margin: 5px 0; }
+.assignment-summary strong span { color: #9aa3b2; font-size: 14px; }
+.assignment-summary p { color: var(--muted); font-size: 10px; margin: 0; }
+.assignment-summary p span { color: var(--green); font-weight: 700; }
+.amber-text { color: var(--amber) !important; }
+.blue-text { color: var(--blue) !important; }
+.green-text { color: var(--green) !important; }
+
+.score-hero { background: linear-gradient(110deg, var(--panel-dark), var(--panel-dark-2)); color: white; border-radius: var(--radius); padding: 25px 30px; display: grid; grid-template-columns: 1fr 140px 1.4fr; align-items: center; margin-bottom: 18px; box-shadow: 0 12px 30px rgba(43,49,57,.25); gap: 20px; }
+.score-hero > div:first-child > small { color: var(--panel-text); font-size: 9px; letter-spacing: 1px; }
+.score-hero > div:first-child > strong { font-size: 46px; display: block; letter-spacing: -2px; }
+.score-hero > div:first-child > p { margin: -3px 0 0; color: var(--panel-text); font-size: 10px; }
+.score-ring { width: 100px; height: 100px; border-radius: 50%; border: 7px solid #6b7280; border-top-color: #7df0b1; display: grid; place-items: center; }
+.score-ring span { font-size: 17px; font-weight: 750; }
+.score-ring small { font-size: 9px; }
+.divergence { display: flex; gap: 13px; align-items: center; border-left: 1px solid rgba(255,255,255,.18); padding-left: 30px; }
+.divergence .metric-icon { background: rgba(76,225,143,.13); color: #73e8a8; }
+.divergence p { margin: 0; }
+.divergence p small { color: var(--panel-text); font-size: 8px; display: block; }
+.divergence p strong { display: block; margin: 6px 0 4px; }
+.divergence em { color: var(--panel-text); font-size: 10px; font-style: normal; }
+.note { display: inline-grid; place-items: center; width: 35px; height: 29px; border-radius: 6px; background: var(--blue-soft); color: var(--blue); font-weight: 700; }
+
+.blind-banner { display: flex; align-items: center; gap: 13px; background: var(--blue-soft); border: 1px solid #dde1e6; border-radius: 12px; padding: 15px 18px; margin-bottom: 18px; }
+.blind-banner > span { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 9px; background: white; color: var(--blue); flex: 0 0 auto; }
+.blind-banner p { margin: 0; flex: 1; }
+.blind-banner p strong { display: block; }
+.blind-banner p small { display: block; color: #687386; margin-top: 3px; font-size: 10px; }
+.review-stats { display: flex; background: white; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 18px; box-shadow: var(--shadow); flex-wrap: wrap; }
+.review-stats div { flex: 1; padding: 15px 20px; border-right: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.review-stats div:last-child { border: 0; }
+.review-stats strong { font-size: 20px; }
+.review-stats span { color: var(--muted); font-size: 10px; }
+.project-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+.review-card { background: white; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); cursor: pointer; transition: .2s ease; min-height: 228px; display: flex; flex-direction: column; }
+.review-card:hover { transform: translateY(-3px); border-color: #c3c8d1; box-shadow: 0 10px 30px rgba(50,56,64,.08); }
+.review-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.review-card .title { line-height: 1.45; min-height: 50px; }
+.comite { display: flex; gap: 6px; color: var(--muted); font-size: 10px; align-items: center; }
+.review-meta { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.review-meta p { margin: 0; }
+.review-meta small { color: #9aa3b2; display: block; font-size: 8px; }
+.review-meta strong { color: var(--ink); font-size: 10px; }
+.review-meta > span:last-child { width: 31px; height: 31px; border-radius: 8px; display: grid; place-items: center; background: var(--blue); color: white; flex: 0 0 auto; }
+.review-meta > span.done { background: var(--green-soft); color: var(--green); }
+.project-code { background: #f1f4f8; color: #687386; border-radius: 6px; padding: 6px 8px; font-size: 9px; font-weight: 750; white-space: nowrap; }
+
+.back-link { color: var(--blue); font-size: 11px; font-weight: 600; cursor: pointer; }
+.back-link.left { margin-bottom: 20px; }
+.evaluation-layout { display: grid; grid-template-columns: 1fr 265px; gap: 18px; align-items: start; }
+.evaluation-layout > div { display: flex; flex-direction: column; gap: 18px; }
+.project-summary > p { margin: 0; padding: 20px 23px; color: #596579; font-size: 12px; line-height: 1.75; }
+.evaluation-form .card-head { border-bottom: 0; }
+.completion { color: var(--blue); background: var(--blue-soft); padding: 6px 9px; border-radius: 7px; font-size: 9px; font-weight: 700; }
+.score-row { display: grid; grid-template-columns: 32px 1fr 130px; gap: 13px; align-items: center; margin: 0 20px; padding: 17px 4px; border-top: 1px solid var(--line); }
+.score-row > span { width: 28px; height: 28px; background: #f2f4f7; border-radius: 7px; display: grid; place-items: center; color: #697386; font-size: 10px; font-weight: 700; }
+.score-row p { margin: 0; }
+.score-row p strong { display: block; }
+.score-row p small { display: block; color: #8993a3; font-size: 9px; margin-top: 4px; }
+.score-row label { border: 1px solid #d9dee7; border-radius: 8px; display: grid; grid-template-columns: 1fr auto; padding: 6px 10px; position: relative; }
+.score-row label small { grid-column: 1/-1; color: #9aa3b2; font-size: 7px; }
+.score-row input { width: 65px; border: 0; outline: 0; font-size: 18px; font-weight: 750; color: var(--blue); background: transparent; }
+.score-row em { align-self: center; font-size: 9px; font-style: normal; color: #9aa3b2; }
+.evaluation-side { display: flex; flex-direction: column; gap: 11px; position: sticky; top: 25px; }
+.evaluation-side > .br-button { width: 100%; }
+.final-score { background: var(--panel-dark); color: white; border-radius: 13px; padding: 23px; text-align: center; box-shadow: 0 10px 26px rgba(43,49,57,.2); }
+.final-score > small { color: var(--panel-text); font-size: 8px; letter-spacing: .9px; display: block; }
+.final-score strong { display: inline-block; font-size: 47px; letter-spacing: -2px; margin: 9px 4px 13px; }
+.final-score > span { color: var(--panel-text); }
+.final-score .progress { margin-bottom: 12px; }
+.final-score .progress i { background: #74e7a8; }
+.final-score p { margin: 0; color: var(--panel-text); font-size: 9px; line-height: 1.5; }
+.submit-note { color: #8a94a4; display: flex; justify-content: center; align-items: center; gap: 5px; font-size: 8px; }
+.sent-box { background: var(--green-soft); color: var(--green); padding: 14px; border-radius: 9px; display: flex; gap: 9px; }
+.sent-box p { margin: 0; }
+.sent-box small { color: #687386; display: block; margin-top: 3px; font-size: 9px; }
+
+.auth-page { min-height: 100vh; display: grid; grid-template-columns: 42% 58%; }
+.auth-aside { background: var(--panel-dark); color: white; padding: 36px 55px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+.auth-aside:after { content: ""; position: absolute; width: 500px; height: 500px; border: 1px solid rgba(255,255,255,.08); border-radius: 50%; right: -300px; bottom: -100px; box-shadow: 0 0 0 70px rgba(255,255,255,.02), 0 0 0 150px rgba(255,255,255,.018); }
+.auth-aside .brand { padding: 0; }
+.auth-aside .brand strong { color: white; }
+.auth-aside .brand small { color: var(--panel-text); }
+.auth-aside .brand-mark { background: white; color: var(--blue); }
+.auth-message { margin: auto 0; max-width: 440px; z-index: 1; }
+.auth-message .title { color: white; font-size: 38px; line-height: 1.2; }
+.auth-message > p { color: var(--panel-text); font-size: 14px; line-height: 1.7; }
+.privacy-note { display: flex; gap: 13px; margin-top: 35px; padding: 14px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05); border-radius: 11px; max-width: 370px; color: var(--panel-text); }
+.privacy-note span { display: flex; flex-direction: column; gap: 4px; }
+.privacy-note strong { color: white; font-size: 11px; }
+.privacy-note small { color: var(--panel-text); font-size: 9px; }
+.auth-footer { color: var(--panel-text); font-size: 9px; z-index: 1; }
+.auth-form-wrap { display: grid; place-items: center; padding: 40px; }
+.auth-card { width: min(390px, 100%); }
+.auth-card > p { color: var(--muted); line-height: 1.6; margin: 8px 0 25px; }
+.auth-card .title { font-size: 27px; }
+.auth-card .br-button { width: 100%; margin-top: 3px; }
+.forgot { color: var(--blue); font-size: 10px; font-weight: 650; align-self: flex-end; margin-top: -6px; cursor: pointer; }
+.secure { display: flex; gap: 5px; justify-content: center; color: #98a1af; margin-top: 18px; font-size: 8px; }
+.auth-mobile-brand { display: none; }
+.auth-simple { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; padding: 30px; background: radial-gradient(circle at center, white, var(--canvas) 58%); }
+.activation-card { background: white; border: 1px solid var(--line); padding: 32px; border-radius: 16px; box-shadow: 0 15px 50px rgba(15,23,42,.08); text-align: left; }
+.success-icon { width: 48px; height: 48px; background: var(--blue-soft); color: var(--blue); border-radius: 13px; display: grid; place-items: center; margin-bottom: 20px; }
+
+@media (max-width: 980px) {
+  .sidebar { width: 76px; padding-inline: 12px; }
+  .sidebar .brand > span:last-child, .workspace, nav > small, .nav-item span { display: none; }
+  .sidebar .brand { padding: 0; justify-content: center; }
+  .nav-item { justify-content: center; padding: 0; }
+  main.content { margin-left: 76px; padding: 30px 24px; }
+  .criteria-layout, .evaluation-layout { grid-template-columns: 1fr; }
+  .weight-card, .evaluation-side { position: static; }
+  .project-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 700px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-aside { display: none; }
+  .auth-mobile-brand { display: block; position: absolute; top: 28px; left: 26px; }
+  .page-header { align-items: flex-start; flex-direction: column; }
+  .assignment-summary, .project-grid { grid-template-columns: 1fr; }
+  .review-stats div { flex-basis: 50%; }
+  .score-hero { grid-template-columns: 1fr 1fr; }
+  .divergence { grid-column: 1/-1; margin-top: 20px; padding: 20px 0 0; border-left: 0; border-top: 1px solid rgba(255,255,255,.18); }
+  .form-grid { grid-template-columns: 1fr; }
+  main.content { padding-inline: 16px; }
+  .title-1 { font-size: 24px; }
+}

@@ -1,4 +1,4 @@
-# Diagrama de Classes — Sistema de Avaliação de Projetos
+# Diagrama de Classes — SICAC
 
 Espelha as entidades JPA implementadas em `projeto_backend/src/main/java/com/avaliacao/sistema/entity/`. Atributos reduzidos aos campos relevantes para leitura (getters/setters do Lombok omitidos). Detalhe completo de cada campo: [../docs/modelagem-dados.md](../docs/modelagem-dados.md).
 

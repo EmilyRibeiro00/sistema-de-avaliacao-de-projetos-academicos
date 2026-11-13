@@ -18,7 +18,7 @@ services:
       retries: 10
 
   backend:
-    build: ./projeto_backend
+    build: ./backend
     container_name: sispac-backend
     depends_on:
       db:
@@ -33,13 +33,13 @@ services:
       - "8080:8080"
 
   frontend:
-    build: ./projeto_frontend
+    build: ./frontend
     container_name: sispac-frontend
     volumes:
       # bind mount do código-fonte: hot-reload funciona igual ao npm run dev local, sem rebuild de imagem
-      - ./projeto_frontend/src:/app/src
-      - ./projeto_frontend/public:/app/public
-      - ./projeto_frontend/index.html:/app/index.html
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
     ports:
       - "5173:5173"
 

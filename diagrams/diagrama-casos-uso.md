@@ -1,4 +1,4 @@
-# Diagrama de Casos de Uso — Sistema de Avaliação de Projetos
+# Diagrama de Casos de Uso — SICAC
 
 Mermaid não tem um tipo nativo de diagrama de casos de uso UML; a notação abaixo usa `flowchart` para aproximar a mesma leitura (atores à esquerda, casos de uso agrupados no sistema, relações `include` tracejadas).
 
@@ -8,7 +8,7 @@ flowchart LR
     Administrador(["Administrador"])
     Sigaa(["Sigaa (sistema externo)"])
 
-    subgraph Sistema de Avaliação de Projetos
+    subgraph SICAC
         UC1(Fazer login)
         UC2(Ativar conta no 1º acesso)
         UC3(Visualizar projetos atribuídos)

@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: parte2-projeto
+  datasource:
+    url: jdbc:postgresql://localhost:5433/avaliacao
+    username: avaliacao
+    password: avaliacao
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:troque-este-segredo-em-producao-pelo-menos-256-bits}
+    access-token-expiracao-minutos: 60
+  cors:
+    origens-permitidas: http://localhost:5173
+  auth:
+    senha-padrao-avaliador: "Trocar@123"
